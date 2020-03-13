@@ -136,8 +136,13 @@ public class SarasCalculator implements Salary {
 
 		// Checks if time has passed 15:00 since it would be Saturday extra
 		if (to.isAfter(threeInEvening)) {
-			double saturdayPeriod = (double) ChronoUnit.MINUTES.between(threeInEvening, to) / 60;
-			result += saturdayPeriod * saturdayExtra;
+			if (from.isBefore(threeInEvening)) {
+				double saturdayPeriod = (double) ChronoUnit.MINUTES.between(threeInEvening, to) / 60;
+				result += saturdayPeriod * saturdayExtra;
+			} else {
+				double saturdayPeriod = (double) ChronoUnit.MINUTES.between(from, to) / 60;
+				result += saturdayPeriod * saturdayExtra;
+			}
 		}
 
 		// Checks if worktime passes 0:00 since it would change to Sunday extra
