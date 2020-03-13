@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
-public class SarasCalculator implements SalaryCalculator {
+public class SarasCalculator implements Salary {
 
 	// Normal salary per hour
 	private double salaryPrHour = 118.42 + 3.65;
@@ -25,7 +25,7 @@ public class SarasCalculator implements SalaryCalculator {
 	private LocalTime threeInEvening = LocalTime.of(15, 0);
 
 	@Override
-	public double calculateSalary(LocalDate day, LocalTime from, LocalTime to, double pause) {
+	public double calculate(LocalDate day, LocalTime from, LocalTime to, double pause) {
 		double hours = 0;
 		// Checks if work starts and ends on same day or goes past midnight
 		if (from.isBefore(to)) {
@@ -36,31 +36,33 @@ public class SarasCalculator implements SalaryCalculator {
 		}
 		// Total salary based on salary per hour times hours worked without extra
 		// payment
-		double result = (hours - pause) * salaryPrHour;
+		double result = (hours - (pause / 60)) * salaryPrHour;
 		// Then we find the extra payment based on the time of the day and the weekday
-		DayOfWeek dayOfWeek = day.getDayOfWeek();
-		switch (dayOfWeek) {
-		case MONDAY:
-		case TUESDAY:
-		case WEDNESDAY:
-		case THURSDAY:
-		case FRIDAY:
-			result += weekdayExtra(from, to);
-			break;
-		case SATURDAY:
-			result += saturdayExtra(from, to);
-			break;
-		case SUNDAY:
-			result += sundayExtra(from, to);
-			break;
-		}
+		if (hours - (pause / 60) > 0) {
+			DayOfWeek dayOfWeek = day.getDayOfWeek();
+			switch (dayOfWeek) {
+			case MONDAY:
+			case TUESDAY:
+			case WEDNESDAY:
+			case THURSDAY:
+			case FRIDAY:
+				result += weekdayExtra(from, to);
+				break;
+			case SATURDAY:
+				result += saturdayExtra(from, to);
+				break;
+			case SUNDAY:
+				result += sundayExtra(from, to);
+				break;
+			}
 
-		// Then we subtract pension
-		result -= result * 0.038;
-		// Then we subtract ATP and Arbejdsmarkedsbidrag (Danish tax shit)
-		result -= result * 0.08;
-		// Then we subtract tax (39%)
-		result -= result * 0.39;
+			// Then we subtract pension
+			result -= result * 0.038;
+			// Then we subtract ATP and Arbejdsmarkedsbidrag (Danish tax shit)
+			result -= result * 0.08;
+			// Then we subtract tax (39%)
+			result -= result * 0.39;
+		}
 		return Math.round(result);
 	}
 

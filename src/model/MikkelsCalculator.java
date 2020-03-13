@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
-public class MikkelsCalculator implements SalaryCalculator {
+public class MikkelsCalculator implements Salary {
 
 	// Normal salary per hour
 	private double salaryPrHour = 118.42;
@@ -12,7 +12,7 @@ public class MikkelsCalculator implements SalaryCalculator {
 	@Override
 	// Day paramater is not used, since there is no use of it on this work place
 	// Can not be removed due to strategy pattern and inheritance from interface
-	public double calculateSalary(LocalDate day, LocalTime from, LocalTime to, double pause) {
+	public double calculate(LocalDate day, LocalTime from, LocalTime to, double pause) {
 		double hours = 0;
 		// Checks if work starts and ends on same day or goes past midnight
 		if (from.isBefore(to)) {
@@ -22,7 +22,7 @@ public class MikkelsCalculator implements SalaryCalculator {
 			hours += (double) ChronoUnit.MINUTES.between(LocalTime.MIDNIGHT, to) / 60;
 		}
 		// Total salary based on salary per hour times hours worked
-		double result = (hours - pause) * salaryPrHour;
+		double result = (hours - (pause / 60)) * salaryPrHour;
 		// Then we calculate pension by adding 16.5% and subtracting our 4%
 		// (collective agreement)
 		result -= result * 1.165 * 0.04;

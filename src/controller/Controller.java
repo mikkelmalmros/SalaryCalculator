@@ -23,12 +23,12 @@ public class Controller {
 	}
 
 	public double calculateSalary(LocalDate day, LocalTime start, LocalTime end, double pause, boolean mikkel) {
-		Salary salary = new Salary(day, start, end, pause);
-		// Checks which calculator should be created, can change at run time
+		Salary salary;
+		// Checks which calculator should be created
 		if (mikkel)
-			salary.setCalculator(new MikkelsCalculator());
+			salary = new MikkelsCalculator();
 		else
-			salary.setCalculator(new SarasCalculator());
-		return salary.calculate();
+			salary = new SarasCalculator();
+		return salary.calculate(day, start, end, pause);
 	}
 }
